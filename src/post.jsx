@@ -1,3 +1,6 @@
 export default function Post(props) {
-    return <p>Post{props.num}</p>
+    return <>
+        <strong>{props.autor}</strong>
+        <p>{props.resumo}</p>
+    </>
 }
