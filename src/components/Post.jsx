@@ -3,18 +3,32 @@ import { format, formatDistanceToNow } from 'date-fns';
 import ptBr from 'date-fns/locale/pt-BR';
 import Comment from './Comment';
 import Avatar from './Avatar';
+import { useState } from 'react';
+import {v4} from 'uuid';
 
 export default function Post(props) {
 
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+
     const publishedDateFornated = format(props.publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
         locale: ptBr,
-    })
+    });
 
     const publishedDateRelativeToNow = formatDistanceToNow(props.publishedAt, {
         locale: ptBr,
         addSuffix: true,
-        
-    })
+    });
+
+    function handleCreateNewComment() {
+        event.preventDefault();
+        setComments([...comments, newComment]);
+        setNewComment('');
+    };
+
+    function handleNewCommentChange() {
+        setNewComment(event.target.value);
+    }
 
     return <>
         <article className={styles.post}>
@@ -33,23 +47,29 @@ export default function Post(props) {
             <div className={styles.content}> 
                 { props.content.map(item => {
                     if(item.type === 'paragraph')
-                        return <p>{item.content}</p>    
+                        return <p key={v4()}>{item.content}</p>    
                     else if(item.type === 'link')
-                        return <p><a href='#'>{item.content}</a></p>   
+                        return <p key={v4()}><a href='#'>{item.content}</a></p>   
                 })}
             </div>
-            <form className={styles.commentForm}>
+            <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe o seu feedback:</strong>
-                <textarea placeholder='Deixe um comentário'/>
+                <textarea 
+                    name="comentario" 
+                    onChange={handleNewCommentChange} 
+                    placeholder='Deixe um comentário'
+                    value={newComment}
+                />
                 <footer>
                     <button type='sumbit'>Publicar</button>
                 </footer>
             </form>
             <div className={styles.commentList}>
-                <Comment/>
-                <Comment/>
-                <Comment/>
-                <Comment/>
+                {
+                    comments.map(comment => (
+                        <Comment key={v4()}content={comment}/>
+                    ))
+                }
             </div>
         </article>
     </>
