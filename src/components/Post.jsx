@@ -27,7 +27,20 @@ export default function Post(props) {
     };
 
     function handleNewCommentChange() {
+        event.target.setCustomValidity('');
         setNewComment(event.target.value);
+    }
+
+    function handleNewCommentInvalid() {
+        event.target.setCustomValidity('Esse campo é obrigatiorio');
+    }
+
+    function deleteComment(comment) {
+        const newList = comments.filter(comentario => {
+            return comentario !== comment;
+        })
+
+        setComments(newList);
     }
 
     return <>
@@ -59,15 +72,21 @@ export default function Post(props) {
                     onChange={handleNewCommentChange} 
                     placeholder='Deixe um comentário'
                     value={newComment}
+                    required
+                    onInvalid={handleNewCommentInvalid}
                 />
                 <footer>
-                    <button type='sumbit'>Publicar</button>
+                    <button type='sumbit' disabled={newComment===''}>Publicar</button>
                 </footer>
             </form>
             <div className={styles.commentList}>
                 {
                     comments.map(comment => (
-                        <Comment key={v4()}content={comment}/>
+                        <Comment 
+                            key={v4()}
+                            content={comment} 
+                            deleteComment={deleteComment}
+                        />
                     ))
                 }
             </div>
