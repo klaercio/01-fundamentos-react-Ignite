@@ -83,7 +83,7 @@ export default function Post(props) {
                 {
                     comments.map(comment => (
                         <Comment 
-                            key={v4()}
+                            key={comment}
                             content={comment} 
                             deleteComment={deleteComment}
                         />
